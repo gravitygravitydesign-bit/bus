@@ -6,7 +6,6 @@ from firebase_admin import credentials, db
 import time
 import os
 
-# --- إعدادات Firebase ---
 # التعديل الذكي لقراءة الملف داخل الأندرويد بأمان:
 current_dir = os.path.dirname(__file__)
 cred_path = os.path.join(current_dir, "serviceAccountKey.json")
