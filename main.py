@@ -2,7 +2,7 @@ import flet as ft
 import random
 import string
 import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import credentials, db
 import time
 import os
 
@@ -11,12 +11,12 @@ import os
 current_dir = os.path.dirname(__file__)
 cred_path = os.path.join(current_dir, "serviceAccountKey.json")
 
-# تأكد أن الاستدعاء يتم بالشكل ده:
 if not firebase_admin._apps:
     cred = credentials.Certificate(cred_path)
-    firebase_admin.initialize_app(cred)
-
-db = firestore.client()
+    # ربط الرابط بتاعك بالظبط هنا 🚀
+    firebase_admin.initialize_app(cred, {
+        'databaseURL': 'https://gravitybusgame-default-rtdb.europe-west1.firebasedatabase.app'
+    })
 
 def main(page: ft.Page):
     #page.title = "اتوبيس كومبليت - Gravity Projects"
