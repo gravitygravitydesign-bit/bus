@@ -11,7 +11,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    # حل التحذيرات الصفراء الخاصة بـ Node.js
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -41,7 +40,7 @@ jobs:
       with:
         channel: 'stable'
 
-    # الحل السحري هنا: أمر yes بيضغط Enter أوتوماتيك لأي سؤال تسأله الأداة
+    # هذا الأمر يضغط الموافقة تلقائياً ويمنع الـ EOFError
     - name: Build APK via Flet CLI
       run: |
         yes | flet build apk --project-name "GravityBus"
