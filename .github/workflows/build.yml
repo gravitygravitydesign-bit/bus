@@ -12,11 +12,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. سحب كود المشروع من الريبوزيتوري
+    # 1. سحب كود المشروع
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # 2. إعداد الجافا (مطلوبة لبناء الأندرويد)
+    # 2. إعداد الجافا
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
@@ -29,23 +29,25 @@ jobs:
       with:
         python-version: '3.11'
 
-    # 4. تثبيت مكتبات بايثون صراحة باستدعاء الـ Module لمنع الـ PATH errors
+    # 4. تثبيت المكتبات وتجهيز الـ PATH على السيرفر تلقائياً
     - name: Install Python Dependencies
       run: |
         python -m pip install --upgrade pip
         python -m pip install flet firebase-admin
-        if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
+        # السطر ده بيجيب مكان أداة flet ويضيفها للـ PATH بتاع السيرفر فوراً
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-    # 5. تثبيت الـ Flutter SDK
+    # 5. تثبيت الفلاتر وتجهيز المسار بتاعه
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
         channel: 'stable'
+        flutter-version: '3.22.0'
 
-    # 6. تشغيل أمر بناء الـ APK من بايثون مباشرة لحل مشكلة flet command not found
+    # 6. تشغيل أمر البناء الأصلي والمستقر
     - name: Build APK via Flet CLI
       run: |
-        python -m flet build apk --no-interactive
+        flet build apk --no-interactive
 
     # 7. رفع ملف الـ APK الناتج كـ Artifact للتحميل
     - name: Upload APK Artifact
