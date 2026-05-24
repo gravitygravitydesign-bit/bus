@@ -5,29 +5,30 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  workflow_dispatch: # عشان يتيح لك تشغيل البناء يدوياً في أي وقت
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
+    # حل التحذيرات الصفراء الخاصة بـ Node.js
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
     steps:
-    # 1. سحب كود المشروع من الريبوزيتوري
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # 2. إعداد الجافا (مطلوبة لبناء الأندرويد)
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
 
-    # 3. إعداد الـ Python وتثبيت مكتبات مشروعك
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-python: '3.10'
+        python-version: '3.10'
 
     - name: Install Python Dependencies
       run: |
@@ -35,18 +36,16 @@ jobs:
         pip install flet firebase-admin
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    # 4. تثبيت الـ Flutter SDK اللي بيحتاجها Flet للبناء
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
         channel: 'stable'
 
-    # 5. تشغيل أمر بناء الـ APK من Flet
+    # الحل السحري هنا: أمر yes بيضغط Enter أوتوماتيك لأي سؤال تسأله الأداة
     - name: Build APK via Flet CLI
       run: |
-        flet build apk
+        yes | flet build apk --project-name "GravityBus"
 
-    # 6. رفع ملف الـ APK الناتج كـ Artifact عشان تقدر تحمله
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
