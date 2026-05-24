@@ -11,44 +11,45 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
     steps:
+    # 1. سحب كود المشروع من الريبوزيتوري
     - name: Checkout code
       uses: actions/checkout@v4
 
+    # 2. إعداد الجافا (مطلوبة لبناء الأندرويد)
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
 
+    # 3. إعداد الـ Python
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.11' # تحديث مستقر يمنع مشاكل الـ CLI
+        python-version: '3.11'
 
+    # 4. تثبيت مكتبات بايثون صراحة باستدعاء الـ Module لمنع الـ PATH errors
     - name: Install Python Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flet firebase-admin
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        python -m pip install flet firebase-admin
+        if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
 
-    # إعداد وتثبيت الـ Flutter SDK لتجنب سؤال الأداة وتفادي الـ EOFError تماماً
+    # 5. تثبيت الـ Flutter SDK
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
         channel: 'stable'
-        flutter-version: '3.22.0' # إصدار متوافق ومستقر جداً مع بناء flet الحالي
 
-    # تشغيل البناء مع تمرير أمر الموافقة التلقائية الصريح
+    # 6. تشغيل أمر بناء الـ APK من بايثون مباشرة لحل مشكلة flet command not found
     - name: Build APK via Flet CLI
       run: |
-        flet build apk --no-interactive
+        python -m flet build apk --no-interactive
 
+    # 7. رفع ملف الـ APK الناتج كـ Artifact للتحميل
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: bus-game-apk
-        path: build/apk/*.apk
+        path: "**/build/apk/*.apk"
