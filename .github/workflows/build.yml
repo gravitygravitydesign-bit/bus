@@ -27,7 +27,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
+        python-version: '3.11' # تحديث مستقر يمنع مشاكل الـ CLI
 
     - name: Install Python Dependencies
       run: |
@@ -35,18 +35,20 @@ jobs:
         pip install flet firebase-admin
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
+    # إعداد وتثبيت الـ Flutter SDK لتجنب سؤال الأداة وتفادي الـ EOFError تماماً
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
         channel: 'stable'
+        flutter-version: '3.22.0' # إصدار متوافق ومستقر جداً مع بناء flet الحالي
 
-    # هذا الأمر يضغط الموافقة تلقائياً ويمنع الـ EOFError
+    # تشغيل البناء مع تمرير أمر الموافقة التلقائية الصريح
     - name: Build APK via Flet CLI
       run: |
-        yes | flet build apk --project-name "GravityBus"
+        flet build apk --no-interactive
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: bus-complete-apk
+        name: bus-game-apk
         path: build/apk/*.apk
