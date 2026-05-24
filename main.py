@@ -1078,4 +1078,4 @@ def main(page: ft.Page):
                 
     show_main_menu()
 
-ft.app(target=main, assets_dir="assets", view=ft.AppView.WEB_BROWSER, port=8550)
+ft.app(target=main, assets_dir="assets")
