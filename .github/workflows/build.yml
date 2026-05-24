@@ -29,12 +29,12 @@ jobs:
       with:
         python-version: '3.11'
 
-    # 4. تثبيت المكتبات وتجهيز الـ PATH على السيرفر تلقائياً
+    # 4. تثبيت أحدث مكتبات وأدوات flet صراحة وتجهيز المسار
     - name: Install Python Dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install flet firebase-admin
-        # السطر ده بيجيب مكان أداة flet ويضيفها للـ PATH بتاع السيرفر فوراً
+        # إجبار السيرفر على تثبيت أحدث نسخة من flet و flet-cli لمنع تعليق الأداة القديمة
+        python -m pip install --upgrade flet firebase-admin
         echo "$HOME/.local/bin" >> $GITHUB_PATH
 
     # 5. تثبيت الفلاتر وتجهيز المسار بتاعه
@@ -44,10 +44,10 @@ jobs:
         channel: 'stable'
         flutter-version: '3.22.0'
 
-    # 6. تشغيل أمر البناء الأصلي والمستقر
+    # 6. تشغيل أمر البناء الذكي (استخدمنا أمر yes البديل للأداة الجديدة لمنع أي تعليق)
     - name: Build APK via Flet CLI
       run: |
-        flet build apk --no-interactive
+        yes | flet build apk
 
     # 7. رفع ملف الـ APK الناتج كـ Artifact للتحميل
     - name: Upload APK Artifact
